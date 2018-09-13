@@ -1,0 +1,75 @@
+Property Testing using Gopter
+25 Sep 2018
+Tags: property testing, gopter, bioinformatics
+
+Ryan Hagenson
+Bioinformatics Scientist, Omaha Henry Doorly Zoo and Aquarium
+@RAHagenson
+
+
+* Definitions
+
+_property_: a high-level attribute of one or more units
+
+_unit_: an individual piece of a greater whole
+
+_unit_test_: validation that a unit is fit for use
+
+_property_test_: validation that a property holds 
+
+
+* Addition example 
+
+Properties:
+1. Given two positive inputs, the output should be greater than either input
+2. Given two negative inputs, the output should be less than either input
+3. Otherwise, output should be less than one input and greater than the other
+
+.play -edit property-testing-gopher-omaha/addition.go
+
+ 
+* Origin of Property Testing
+
+Property testing is a functional/logical programming idea. Made popular by the QuickCheck "automatic specification-based testing" tool in Haskell.
+
+.link https://en.wikipedia.org/wiki/QuickCheck
+
+Property testing allows rapid, random unit testing across entire input matrix. The previous addition example has either 2^64 or 2^128 possible inputs depending on the word size of your machine...too many to test even for such a simple function.
+
+
+* Interworkings of Property Testing
+
+In the QuickCheck style, property tests try to create as many failing tests as possible. If one input fails, property testing trys to find a similar failing input.
+
+* Gopter
+
+Source: 
+.link https://github.com/leanovate/gopter
+
+Substructure:
++ `gopter/gen`: input generators
++ `gopter/prop`: define properties
++ `gopter/arbitrary`: define arbitrary types
++ `gopter/commands`: stateful testing using arbitraries
++ `gopter/convey`: using `gopter` inside `goconvey` tests
+
+Only really need `gen` and `prop` as arbitary types allow skipping invalid inputs which (I think) should be tested for failure property.
+
+
+* Gopter steps
+
+1. Initialize testing parameters (helpful defaults exist)
+2. Define each property in-turn
+3. Run tests
+
+(Piece of advice: override `TestParameters.Rng` to have repeatable randomness, or use `gopter.DefaultTestParametersWithSeed`)
+
+* FizzBuzz Gopter example: 
+
+.link https://github.com/leanovate/gopter/blob/master/example_fizzbuzz_test.go
+
+Note: this example lacks 100% code coverage (does not test "FizzBuzz" results).
+
+* Addition Gopter example:
+
+.play property-testing-gopher-omaha/addition_test.go
