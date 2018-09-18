@@ -15,45 +15,50 @@ _unit_: an individual piece of a greater whole
 
 _unit_test_: validation that a unit is fit for use
 
-_property_test_: validation that a property holds 
+_property_test_: validation that a property holds
 
 
-* Addition example 
+* Addition example
 
 Properties:
 1. Given two positive inputs, the output should be greater than either input
 2. Given two negative inputs, the output should be less than either input
 3. Otherwise, output should be less than one input and greater than the other
 
-.play -edit property-testing-gopher-omaha/addition.go
+.play -edit property-testing-gopher-omaha/main.go
 
- 
+: We could set this up as a table test, but why arbitrarily choose *a* positive and *a* negative when we know what should happen with *any* positive and *any* negative?
+
+
 * Origin of Property Testing
 
 Property testing is a functional/logical programming idea. Made popular by the QuickCheck "automatic specification-based testing" tool in Haskell.
 
 .link https://en.wikipedia.org/wiki/QuickCheck
 
-Property testing allows rapid, random unit testing across entire input matrix. The previous addition example has either 2^64 or 2^128 possible inputs depending on the word size of your machine...too many to test even for such a simple function.
+Property testing allows rapid, random unit testing across the entire input matrix. The previous addition example has (2^32)^2 or (2^64)^2 possible inputs depending on the word size of your machine...too many to test even for such a simple function.
 
 
 * Interworkings of Property Testing
 
-In the QuickCheck style, property tests try to create as many failing tests as possible. If one input fails, property testing trys to find a similar failing input.
+In the QuickCheck tradition, property tests try to create as many failing tests as possible. If one input fails, property testing tries to find a similar failing input.
+
 
 * Gopter
 
-Source: 
+Source:
 .link https://github.com/leanovate/gopter
 
 Substructure:
 + `gopter/gen`: input generators
 + `gopter/prop`: define properties
 + `gopter/arbitrary`: define arbitrary types
-+ `gopter/commands`: stateful testing using arbitraries
++ `gopter/commands`: stateful testing using arbitrary types
 + `gopter/convey`: using `gopter` inside `goconvey` tests
 
-Only really need `gen` and `prop` as arbitary types allow skipping invalid inputs which (I think) should be tested for failure property.
+Only really need `gen` and `prop` as arbitrary types allow skipping invalid inputs which (I think) should be tested for failure property.
+
+: If your function is only valid for a particular input range, then outside that range should provide a helpful error (which is just another property to test).
 
 
 * Gopter steps
@@ -62,14 +67,44 @@ Only really need `gen` and `prop` as arbitary types allow skipping invalid input
 2. Define each property in-turn
 3. Run tests
 
-(Piece of advice: override `TestParameters.Rng` to have repeatable randomness, or use `gopter.DefaultTestParametersWithSeed`)
+(Suggestion: override `*TestParameters.Rng` to have repeatable randomness, or use `gopter.DefaultTestParametersWithSeed(...)`)
 
-* FizzBuzz Gopter example: 
+
+* FizzBuzz Gopter example:
 
 .link https://github.com/leanovate/gopter/blob/master/example_fizzbuzz_test.go
 
-Note: this example lacks 100% code coverage (does not test "FizzBuzz" results).
+: This example lacks 100% code coverage (does not test "FizzBuzz" results).
+
 
 * Addition Gopter example:
 
-.play property-testing-gopher-omaha/addition_test.go
+.link property-testing-gopher-omaha/addition/addition_test.go
+
+  go test -v ./property-testing-gopher-omaha/addition
+
+* Property Testing of Addition Output
+    === RUN   Test_Add
+    + Given two positives, output is greater than either: OK, passed 100 tests.
+    Elapsed time: 626.278µs
+    + Given two negatives, output is less than either: OK, passed 100 tests.
+    Elapsed time: 867.813µs
+    + Given one negative and one positive, output should be between the: OK, passed
+       100 tests.
+    Elapsed time: 873.767µs
+    --- PASS: Test_Add (0.00s)
+    PASS
+    ok  	github.com/rhagenson/presentations/property-testing-gopher-omaha/addition	0.005s
+
+Question: What property exists that we did not test for?
+
+: Add(0,0) does not satisfy any of the prior properties. Zero is neither negative nor positive, it is part of the trichotomy of real numbers.
+
+
+* Whole Package Example
+
+(The Bioinformatics library I have mentioned in previous Meetups, still closed source as it is pre-v1)
+
+  go test -v bitbucket.org/rhagenson/bigr/...
+
+Validates 76 properties at 100 tests each for what is effectively 7,600 units tests in approximately 1 second.
