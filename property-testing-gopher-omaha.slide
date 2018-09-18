@@ -43,6 +43,8 @@ Property testing allows rapid, random unit testing across the entire input matri
 
 In the QuickCheck tradition, property tests try to create as many failing tests as possible. If one input fails, property testing tries to find a similar failing input.
 
+One failed test should lead to more failed tests. All tests passing is evidence that tests failed to fail; a better indicator of success than continually passing with the same known inputs.
+
 
 * Gopter
 
@@ -77,11 +79,11 @@ Only really need `gen` and `prop` as arbitrary types allow skipping invalid inpu
 : This example lacks 100% code coverage (does not test "FizzBuzz" results).
 
 
-* Addition Gopter example:
+* Addition Gopter Example
 
 .link property-testing-gopher-omaha/addition/addition_test.go
 
-  go test -v ./property-testing-gopher-omaha/addition
+  go test -v ./property-testing-gopher-omaha/...
 
 * Property Testing of Addition Output
     === RUN   Test_Add
@@ -107,4 +109,4 @@ Question: What property exists that we did not test for?
 
   go test -v bitbucket.org/rhagenson/bigr/...
 
-Validates 76 properties at 100 tests each for what is effectively 7,600 units tests in approximately 1 second.
+Validates 76 properties at 100 tests each for what is effectively 7,600 unit tests in approximately 1 second.
