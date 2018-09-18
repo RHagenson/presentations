@@ -109,4 +109,4 @@ Question: What property exists that we did not test for?
 
   go test -v bitbucket.org/rhagenson/bigr/...
 
-Validates 76 properties at 100 tests each for what is effectively 7,600 unit tests in approximately 1 second.
+Validates 209 units containing 76 properties at 100 tests each for what is effectively 7,600 property tests and 133 unit tests in approximately 1 second.
