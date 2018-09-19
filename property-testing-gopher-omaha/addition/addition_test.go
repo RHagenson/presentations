@@ -9,6 +9,10 @@ import (
 	"github.com/leanovate/gopter/prop"
 )
 
+func Add(x, y int) int {
+	return x + y
+}
+
 func Test_Add(t *testing.T) {
 	properties := gopter.NewProperties(
 		gopter.DefaultTestParametersWithSeed(180925), // Date of talk
